@@ -1,14 +1,38 @@
 import RPi.GPIO as GPIO
 import time
+import threading
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(21,GPIO.OUT)
-print("setup")
-time.sleep(2)
 
-GPIO.output(21,True)
-time.sleep(1000)
-GPIO.output(21,False)
 
-GPIO.cleanup()
-print("end")
+    
+
+
+
+class controlThread(threading.Thread):
+    
+        flag=0
+        def setInfo(self,dataList):
+            self.dataList=dataList
+        
+        def run(self):
+            
+            while True:        
+                print("this is control thread")
+                if(self.dataList[0]<36):
+                    GPIO.setup(20,GPIO.OUT)
+                    GPIO.output(20,True)
+                    print("36도 미만입니다.")
+                else:
+                    print("36도 이상입니다.")
+                    GPIO.setup(20,GPIO.OUT)
+                    GPIO.output(20,False)
+                    GPIO.setup(20,GPIO.IN)
+                    
+                    
+                    
+                    
+                time.sleep(3)
+ 
+
+        
+
