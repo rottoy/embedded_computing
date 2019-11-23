@@ -1,4 +1,4 @@
-<h1> embedded_computing
+<h1> embedded_computing Term Project</h1>
   
   
 <h2>2019년 임베디드 컴퓨팅 팀프로젝트
