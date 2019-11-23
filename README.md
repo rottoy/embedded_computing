@@ -4,20 +4,20 @@
 
 UPDATE
 
-20191121
-파이썬 파일 기능에 맞게 모듈화.
-(Farm.py
-dht11.py
-dht11_example.py
-Farm.py
-farm_server.py
-FarmControl.py
-FarmServer.py
-Measuring.py
-)
-
-
-20191122
+20191121  
+파이썬 파일 기능에 맞게 모듈화.  
+(Farm.py  
+dht11.py  
+dht11_example.py  
+Farm.py  
+farm_server.py  
+FarmControl.py  
+FarmServer.py  
+Measuring.py  
+)  
+  
+  
+20191122  
 FLASK LOCAL 서버 구축 성공(우리집 공유기에서만 작동!)
 GET , POST 방식으로 JSON 객체 데이터 전송 공부.
 Templates 폴더에 정보 출력을 위한 html파일 작성
