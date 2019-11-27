@@ -1,0 +1,1 @@
+cmd_/root/Example/HW/Ex_05_dev.ko := ld -r  -EL -T ./scripts/module-common.lds -T ./arch/arm/kernel/module.lds  --build-id  -o /root/Example/HW/Ex_05_dev.ko /root/Example/HW/Ex_05_dev.o /root/Example/HW/Ex_05_dev.mod.o ;  true
