@@ -2,6 +2,7 @@ import Measuring
 import FarmServer
 import FarmControl
 import time
+import FarmC
 import RPi.GPIO as GPIO
 
 

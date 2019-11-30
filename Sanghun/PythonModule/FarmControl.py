@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 import threading
+import FarmC
 
 
 
@@ -18,15 +19,13 @@ class controlThread(threading.Thread):
             
             while True:        
                 print("this is control thread")
-                if(self.dataList[0]<38.8):
-                    GPIO.setup(20,GPIO.OUT)
-                    GPIO.output(20,True)
+                if(self.dataList[0]<38.5):
+                    
+                    FarmC.pinSet(20,1)
                     print("36도 미만입니다.")
                 else:
                     print("36도 이상입니다.")
-                    GPIO.setup(20,GPIO.OUT)
-                    GPIO.output(20,False)
-                    GPIO.setup(20,GPIO.IN)
+                    FarmC.pinSet(20,0)
                     
                     
                     
