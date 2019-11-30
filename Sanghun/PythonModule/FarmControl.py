@@ -18,11 +18,7 @@ class controlThread(threading.Thread):
             
             while True:        
                 print("this is control thread")
-<<<<<<< HEAD
-                if(self.dataList[0]<37):
-=======
-                if(self.dataList[0]<36):
->>>>>>> 2903127df8e596a7c8b677fb16cd1b79a619e876
+                if(self.dataList[0]<38.8):
                     GPIO.setup(20,GPIO.OUT)
                     GPIO.output(20,True)
                     print("36도 미만입니다.")
@@ -35,12 +31,6 @@ class controlThread(threading.Thread):
                     
                     
                     
-<<<<<<< HEAD
-                time.sleep(10)
-=======
                 time.sleep(3)
->>>>>>> 2903127df8e596a7c8b677fb16cd1b79a619e876
  
-
-        
 
