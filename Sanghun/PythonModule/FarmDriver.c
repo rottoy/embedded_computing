@@ -8,7 +8,7 @@
 #include <linux/uaccess.h>    
 //#include <asm/uaccess.h>    
 #include <asm/io.h>
-#include "simple.h"
+#include "FarmHeader.h"
 // timer header
 #include <linux/timer.h>
 
@@ -88,33 +88,33 @@ long simple_ioctl ( struct file *filp, unsigned int cmd, unsigned long arg)
         return -EINVAL;
 
     switch(cmd){
-        case MY_IOC_SET:
+        case MY_IOC_GPIO_SET:
         {
             printk("MY_IOC_SET\n");
-            copy_from_user((void *)&farmCtl, (void *)arg, sizeof(farmCtl));
+            copy_from_user((void *)&farmctl, (void *)arg, sizeof(farmctl));
             //farmCtl, 의 값을 가져와서 저장한다.
-            printk("%d 포트, 오더는 %d 입니다. \n",farmCtl.pin,farmCtl.funcNum);
+            printk("%d 포트, 오더는 %d 입니다. \n",farmctl.pin,farmctl.funcNum);
             break;
         }
         case MY_IOC_GPIO_ACTIVE:
         {
             int  i=0;
 
-            printk("%d 번 핀의 output을 ACTIVE 합니다.\n",farmCtl.pin);
+            printk("%d 번 핀의 output을 ACTIVE 합니다.\n",farmctl.pin);
 
-            unsigned long offset = farmCtl.pin/10;
+            unsigned long offset = farmctl.pin/10;
 
             unsigned long val = (u32)ioread32(&(pRegs->GPFSEL[offset]));
 
-            int item = farmCtl.pin % 10;
+            int item = farmctl.pin % 10;
     
             val &= ~(0x7 << (item*3));
          
-            val |= ((1 & 0x7) << (item*3));
+            val |= ((farmctl.funcNum & 0x7) << (item*3));
    
             iowrite32((u32)val, &(pRegs->GPFSEL[offset]));
             // init timer
-            pinSet(farmCtl.pin);
+            pinSet(farmctl.pin);
             // timer active
             break;
         }
@@ -122,21 +122,21 @@ long simple_ioctl ( struct file *filp, unsigned int cmd, unsigned long arg)
         {
             int  i=0;
 
-            printk("%d 번 핀의 output을 INACTIVE 합니다.\n",farmCtl.pin);
+            printk("%d 번 핀의 output을 INACTIVE 합니다.\n",farmctl.pin);
 
-            unsigned long offset = farmCtl.pin/10;
+            unsigned long offset = farmctl.pin/10;
 
             unsigned long val = (u32)ioread32(&(pRegs->GPFSEL[offset]));
 
-            int item = farmCtl.pin % 10;
+            int item = farmctl.pin % 10;
     
             val &= ~(0x7 << (item*3));
          
-            val |= ((1 & 0x7) << (item*3));
+            val |= ((farmctl.funcNum & 0x7) << (item*3));
    
             iowrite32((u32)val, &(pRegs->GPFSEL[offset]));
             // init timer
-            pinClr(farmCtl.pin);
+            pinClr(farmctl.pin);
             // timer active
             break;
         }        
@@ -214,15 +214,17 @@ void simple_exit(void)
 
 
 void pinSet(int pin){
-    unsigned long offset = farmCtl.pin/32;
-    unsigned long mask = (1<<(farmCtl.pin%32));
+    unsigned long offset = farmctl.pin/32;
+    unsigned long mask = (1<<(farmctl.pin%32));
     iowrite32((u32)mask, &(pRegs->GPSET[offset]));
+    printk("%d에 %d 값을 썼습니다.",farmctl.pin,farmctl.funcNum);
 }
 
 void pinClr(int pin){
-    unsigned long offset = farmCtl.pin/32;
-    unsigned long mask = (1<<(farmCtl.pin%32));
+    unsigned long offset = farmctl.pin/32;
+    unsigned long mask = (1<<(farmctl.pin%32));
     iowrite32((u32)mask, &(pRegs->GPCLR[offset]));
+    printk("%d에 %d 값을 썼습니다.",farmctl.pin,farmctl.funcNum);
 }
 
 module_init(simple_init);    

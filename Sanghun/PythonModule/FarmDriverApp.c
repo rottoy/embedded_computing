@@ -5,7 +5,7 @@
 #include <fcntl.h>    
 #include <termios.h>
 #include <unistd.h>    
-#include "simple.h"
+#include "FarmHeader.h"
 #include <string.h>
 
 #define DEVICE_FILENAME  "/dev/Farm"    
@@ -27,8 +27,9 @@ int main(int argc, char* argv[])
     // init ledctl
     memset(&farmctl, 0, sizeof(farmctl));    
     int size = sizeof(farmctl);    
-    farmCtl.pin=temperPin;
-    printf("%d 가 핀번호 입니다.",farmctl.pin);
+    farmctl.pin=temperPin;
+    printf("%d 가 pin 입니다.\n",farmctl.pin);
+    printf("%d 가 funcNum 의 Bool 값 입니다.\n",farmctl.funcNum);
     // init device driver
     fd = open( DEVICE_FILENAME, O_RDWR|O_NDELAY );    
     if( fd >= 0 ){  
@@ -38,11 +39,11 @@ int main(int argc, char* argv[])
         else farmctl.funcNum=0;
 
         printf("send ledctl to device driver\n");
-        ioctl(fd, MY_IOC_SET, &farmctl);  
+        ioctl(fd, MY_IOC_GPIO_SET, &farmctl);  
         if(farmctl.funcNum)
-            ioctl(fd, MY_IOC_ACTIVE);    
+            ioctl(fd, MY_IOC_GPIO_ACTIVE);    
         else
-            ioctl(fd,MY_IOC_INACTIVE);
+            ioctl(fd,MY_IOC_GPIO_INACTIVE);
     }
   
     close(fd);    

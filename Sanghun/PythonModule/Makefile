@@ -1,18 +1,18 @@
-obj-m+=FarmDriver.o  
+obj-m+=FarmDriver.o
 
-ARCH :=arm  
-PWD := $(shell pwd)  
-     
-all:  
-	make -C /lib/modules/$(shell uname -r)/build/ M=$(PWD) ARCH=$(ARCH) modules  
+ARCH :=arm
 
+PWD := $(shell pwd)
+
+all:
+	make -C /lib/modules/$(shell uname -r)/build/ M=$(PWD) ARCH=$(ARCH) modules
 demo:
 	gcc -o FarmDriverApp FarmDriverApp.c
-    
-clean:  
+
+clean:
 	make -C /lib/modules/$(shell uname -r)/build/ M=$(PWD) ARCH=$(ARCH) clean
 	rm -rf FarmDriverApp
-    	rm -rf ledModule.o ledModule.so
+	rm -rf ledModule.o ledModule.so
 
 
 
