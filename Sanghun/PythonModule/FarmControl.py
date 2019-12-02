@@ -19,7 +19,7 @@ class controlThread(threading.Thread):
             
             while True:        
                 print("this is control thread")
-                if(self.dataList[0]<38.5):
+                if(self.dataList[0]<38):
                     
                     FarmC.pinSet(20,1)
                     print("36도 미만입니다.")
