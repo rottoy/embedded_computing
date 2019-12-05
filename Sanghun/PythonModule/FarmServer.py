@@ -1,7 +1,7 @@
-import Measuring
-import FarmServer
+
+
 #import FarmControl
-from flask import Flask, render_template ,request
+from flask import Flask, render_template ,request, jsonify
 import datetime
 
 app = Flask(__name__)
@@ -64,17 +64,6 @@ def compare(current, settings):
         isHumidSensorOn = False
     else:
         isHumidSensorOn = True
-def measure():
-    global current_th_list
-    global setting_th_list
-    t=Measuring.measureThread(args=current_th_list)
-
-    print("measure start")
-    t.start()
-    t.join() # synchronous but not good in efficiency. it has to be asynchronous to be efficient.
-
-    print(current_th_list)
-
 
 @app.route('/thermoReport', methods=['POST'])
 def report():
@@ -82,9 +71,11 @@ def report():
     global setting_th_list
     temperFlag=0
     humidFlag=0
-    data = request.get_json()
-    current_th_list[0]=data[temper]
-    current_th_list[1]=data[humid]
+    data = request.get_json(force=True)
+    print(data)
+    print(type(data))
+    current_th_list[0]=(int)(data["temper"])
+    current_th_list[1]=(int)(data["humid"])
     if current_th_list[0]<setting_th_list[0]:
         temperFlag=1
     else :
@@ -94,6 +85,9 @@ def report():
     else:
         humidFlag=0
     return jsonify(light = temperFlag, humid = humidFlag)
+   
+    return jsonify("hello world")
+ 
 
 
 
@@ -103,8 +97,8 @@ def report():
 
 
 def main():
-    measure()
-    app.run(host='localhost', port=4321, debug=True)
+    
+    app.run(host='127.0.0.1', port=4321, debug=True)
 
 if(__name__=="__main__"):
     main()
