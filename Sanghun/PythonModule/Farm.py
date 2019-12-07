@@ -10,6 +10,7 @@ dataList=[0,38.0,0,75] #  현재 온도, 적정온도이다. 일단은. 네트�
 #뒤에두개는 현재습도 적정습도이다.
 def measure():
     #measure쓰레드를 실행시킨다. 
+    global dataList
     t=Measuring.measureThread()
     t.setInfo(dataList)
     t.start()
@@ -17,8 +18,9 @@ def measure():
     time.sleep(5)
 
 def control():
-    t=FarmControl.controlThread()
-    t.setInfo(dataList)
+    global dataList
+    t=FarmControl.controlThread(dataList)
+    #t.setInfo(dataList)
     t.start()
     print("control start")
     time.sleep(3)

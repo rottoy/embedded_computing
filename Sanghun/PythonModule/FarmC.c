@@ -20,11 +20,10 @@ static PyObject *pinSet(PyObject *self, PyObject *args)
     
     if(!PyArg_ParseTuple(args, "ii", &pin,&order))
         return NULL;
-    
-    
     memset(&farmctl, 0, sizeof(farmctl));    
     int size = sizeof(farmctl);    
     farmctl.pin=pin;
+    farmctl.funcNum=order;
     printf("%d 가 pin 입니다.\n",farmctl.pin);
     printf("%d 가 funcNum 의 Bool 값 입니다.\n",farmctl.funcNum);
     fd = open( DEVICE_FILENAME, O_RDWR|O_NDELAY );    

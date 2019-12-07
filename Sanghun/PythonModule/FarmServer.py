@@ -65,6 +65,7 @@ def compare(current, settings):
     else:
         isHumidSensorOn = True
 
+        
 @app.route('/thermoReport', methods=['POST'])
 def report():
     global current_th_list
@@ -73,20 +74,19 @@ def report():
     humidFlag=0
     data = request.get_json(force=True)
     print(data)
-    print(type(data))
     current_th_list[0]=(int)(data["temper"])
     current_th_list[1]=(int)(data["humid"])
-    if current_th_list[0]<setting_th_list[0]:
+    if current_th_list[0]<=setting_th_list[0]:
         temperFlag=1
     else :
         temperflag=0
-    if current_th_list[1]<setting_th_list[1]:
+    if current_th_list[1]<=setting_th_list[1]:
         humidFlag=1
     else:
         humidFlag=0
-    return jsonify(light = temperFlag, humid = humidFlag)
+    return jsonify(light = temperFlag, humid = humidFlag, setTemper = setting_th_list[0], setHimid= setting_th_list[1])
    
-    return jsonify("hello world")
+
  
 
 
@@ -98,7 +98,7 @@ def report():
 
 def main():
     
-    app.run(host='127.0.0.1', port=4321, debug=True)
+    app.run(host='172.30.1.55', port=4321, debug=True)
 
 if(__name__=="__main__"):
     main()
