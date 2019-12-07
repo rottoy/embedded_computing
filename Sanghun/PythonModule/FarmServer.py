@@ -73,6 +73,7 @@ def report():
     temperFlag=0
     humidFlag=0
     data = request.get_json(force=True)
+    print("받아왔습니다")
     print(data)
     current_th_list[0]=(int)(data["temper"])
     current_th_list[1]=(int)(data["humid"])
@@ -85,16 +86,11 @@ def report():
     else:
         humidFlag=0
     return jsonify(light = temperFlag, humid = humidFlag, setTemper = setting_th_list[0], setHimid= setting_th_list[1])
-   
 
- 
-
-
-
-
-
-
-
+@app.route('/getTH')
+def getTempHumid():
+    global current_th_list
+    return jsonify(temparature = current_th_list[0], humidity=current_th_list[1])
 
 def main():
     

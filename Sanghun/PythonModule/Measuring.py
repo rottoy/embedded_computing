@@ -28,6 +28,7 @@ class measureThread(threading.Thread):
                     print("Humidity: %d %%" % result.humidity)
                     #여기서 현재 온도를 넘겨준다.
                     self.dataList[0]=result.temperature 
+                    self.dataList[2]=result.humidity
                 time.sleep(3)
 
         
