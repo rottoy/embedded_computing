@@ -99,9 +99,19 @@ def getSensor():
     global isHumidSensorOn
     return jsonify(isTemp=isTempSensorOn, isHumid=isHumidSensorOn)
 
-
-
-
+@app.route('/sendServerFromUI', methods=['GET','POST'])
+def setStatus():
+    print("sadas")
+    data = request.get_json(force=True)
+    print(format(data))
+    print(data)
+    
+    setting_th_list[0] = int(data["ui_temperature"])
+    setting_th_list[1] = int(data["ui_humidity"])
+    
+    print("settings temparature changed : "+str(setting_th_list[0]))
+    print("settings humidity changed : "+str(setting_th_list[1]))
+    return jsonify(statusMessage="Success")
 
 def main():
     
