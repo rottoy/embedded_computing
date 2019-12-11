@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+   <head>
+      <title>현재 온습도 + 온/습도 설정하기</title>
+   </head>
+
+   <body>
+      <h1>The current temperature is : {{temperature}}</h1>
+      <h2>The current humidity is: {{ humidity }}</h2>
+
+      <form action="/post" method="post">
+        <p>온도 : <input type="text" name="action_temp"></p>
+        <p>습도 : <input type="text" name="action_humid"></p>
+        <input type="submit" value="정보 넘기기">
+   </body>
+</html>
+

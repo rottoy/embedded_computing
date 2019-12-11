@@ -98,46 +98,33 @@ long simple_ioctl ( struct file *filp, unsigned int cmd, unsigned long arg)
         }
         case MY_IOC_GPIO_ACTIVE:
         {
+            //farmCtl, 구조체의 들어있는 pin에 해당하는 GPFSEL레지스터의 공간에 001을 써준다.
+            //그렇게 아웃풋 모드로 만들어 주고, pinSet으로 전기신호를 내보낸다.
             int  i=0;
-
             printk("%d 번 핀의 output을 ACTIVE 합니다.\n",farmctl.pin);
-
             unsigned long offset = farmctl.pin/10;
-
             unsigned long val = (u32)ioread32(&(pRegs->GPFSEL[offset]));
-
             int item = farmctl.pin % 10;
-    
             val &= ~(0x7 << (item*3));
-         
             val |= ((farmctl.funcNum & 0x7) << (item*3));
-   
             iowrite32((u32)val, &(pRegs->GPFSEL[offset]));
-            // init timer
             pinSet(farmctl.pin);
-            // timer active
             break;
         }
         case MY_IOC_GPIO_INACTIVE:
         {
+            //farmCtl, 구조체의 들어있는 pin에 해당하는 GPFSEL레지스터의 공간에 000을 써준다.???
+            ///릴레이의 경우 GPCLR의 pin의 공간에 1을 써넣는것만으로는 꺼지지 않아 고민하고 이것저것
+            ///시도해 보다가 그냥 Function 을 읽기로 바꿔버렸더니 꺼졌다...
             int  i=0;
-
             printk("%d 번 핀의 output을 INACTIVE 합니다.\n",farmctl.pin);
-
             unsigned long offset = farmctl.pin/10;
-
             unsigned long val = (u32)ioread32(&(pRegs->GPFSEL[offset]));
-
             int item = farmctl.pin % 10;
-    
             val &= ~(0x7 << (item*3));
-         
-            val |= ((farmctl.funcNum & 0x7) << (item*3));
-   
+            val |= ((farmctl.funcNum & 0x7) << (item*3));   
             iowrite32((u32)val, &(pRegs->GPFSEL[offset]));
-            // init timer
             pinClr(farmctl.pin);
-            // timer active
             break;
         }        
     }    
@@ -215,10 +202,18 @@ void simple_exit(void)
 
 void pinSet(int pin){
     unsigned long offset = farmctl.pin/32;
+    //GPSET같은 경우 하나의 비트만 사용하니 
+    //몇번째 레지스터인지 알아볼 수있따 32로 나눈 몫을 통하여
     unsigned long mask = (1<<(farmctl.pin%32));
+    //이번엔 32개중에 몇번째에 써야하는지를 알아야 하니 32로 나눈 나머지만큼 1을 쉬프트 해서 마스크를
+    //만든다.
     iowrite32((u32)mask, &(pRegs->GPSET[offset]));
+    //offset번째의 GPSET레지스터에 mask를 쓴다. 
+    //이건그냥 1을쓰면 알았어하고 초기화 되기 때문에 GPFSEL처럼 레지스터내의 다른값들을 보존하고
+    //하는 과정이필요가 없다.
     printk("%d에 %d 값을 썼습니다.",farmctl.pin,farmctl.funcNum);
 }
+
 
 void pinClr(int pin){
     unsigned long offset = farmctl.pin/32;

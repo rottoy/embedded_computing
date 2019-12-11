@@ -16,7 +16,7 @@ def initialize():
     now = datetime.datetime.now()
     timeString = now.strftime("%Y-%m-%d %H:%M")
     templateData = {
-        'temparature' : current_th_list[0],
+        'temperature' : current_th_list[0],
         'humidity': current_th_list[1]
     }
     return render_template('main.html', **templateData)
@@ -27,11 +27,11 @@ def post():
 
     global setting_th_list
 
-    temparature = request.form['action_temp'] # main.html의 post를 통해서 사용자 온도 설정 입력값을 받아오게 됨
+    temperature = request.form['action_temp'] # main.html의 post를 통해서 사용자 온도 설정 입력값을 받아오게 됨
     humidity = request.form['action_humid'] #main.html의 post 를 통해서 사용자 습도 설정 입력값을 받아오게 됨
 
     #BACK (설정 온습도 와 현재 온습도 비교를 통한 결과 값 반환)
-    setting_th_list[0] =int(temparature)
+    setting_th_list[0] =int(temperature)
     setting_th_list[1] =int(humidity)
     compare(current_th_list,setting_th_list) #값 비교 함수 호출
 
@@ -44,7 +44,7 @@ def post():
     if isHumidSensorOn:
         str_humid ="습도 센서가 켜졌습니다!"
     templateData = {
-        'temparature' : temparature,
+        'temperature' : temperature,
         'humidity': humidity,
         'str_temp' : str_temp,
         'str_humid' : str_humid
@@ -70,6 +70,8 @@ def compare(current, settings):
 def report():
     global current_th_list
     global setting_th_list
+    global isTempSensorOn
+    global isHumidSensorOn
     temperFlag=0
     humidFlag=0
     data = request.get_json(force=True)
@@ -78,30 +80,36 @@ def report():
     current_th_list[1]=(int)(data["humid"])
     if current_th_list[0]<=setting_th_list[0]:
         temperFlag=1
+        isTempSensorOn=True
     else :
         temperflag=0
+        isTempSensorOn=False
     if current_th_list[1]<=setting_th_list[1]:
         humidFlag=1
+        isHumidSensorOn=True
     else:
         humidFlag=0
-    return jsonify(light = temperFlag, humid = humidFlag, setTemper = setting_th_list[0], setHimid= setting_th_list[1])
+        isHumidSensorOn=False
+    return jsonify(light = temperFlag, humid = humidFlag, setTemper = setting_th_list[0], setHumid= setting_th_list[1])
    
 
 
 @app.route('/getTH')
 def getTempHumid():
     global current_th_list
-    return jsonify(temparature = current_th_list[0], humidity=current_th_list[1])
+    return jsonify(temperature = current_th_list[0], humidity=current_th_list[1])
 
 @app.route('/getStatusTH')
 def getSensor():
     global isTempSensorOn
     global isHumidSensorOn
+    print("server : "+str(isTempSensorOn))
+    print("server : "+str(isHumidSensorOn))
     return jsonify(isTemp=isTempSensorOn, isHumid=isHumidSensorOn)
 
 @app.route('/sendServerFromUI', methods=['GET','POST'])
 def setStatus():
-    print("sadas")
+    #print("sadas")
     data = request.get_json(force=True)
     print(format(data))
     print(data)
@@ -109,10 +117,20 @@ def setStatus():
     setting_th_list[0] = int(data["ui_temperature"])
     setting_th_list[1] = int(data["ui_humidity"])
     
-    print("settings temparature changed : "+str(setting_th_list[0]))
+    print("settings temperature changed : "+str(setting_th_list[0]))
     print("settings humidity changed : "+str(setting_th_list[1]))
     return jsonify(statusMessage="Success")
+@app.route('/putBulbOff')
+def setBulbOff():
+    global isTempSensorOn
+    isTempSensorOn=False
+    return jsonify(statusMessage="Bulb Turned Off")
 
+@app.route('/putHumidOff')
+def setHumidOff():
+    global isHumidSensorOn
+    isHumidSensorOn=False
+    return jsonify(statusMessage="Humid Turned Off")
 def main():
     
     app.run(host='172.30.1.55', port=4321, debug=True)

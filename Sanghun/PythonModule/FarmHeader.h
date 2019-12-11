@@ -2,10 +2,10 @@
 #define __FARMHEADER__
 
 typedef struct _farmCtl{
-
     int pin;
     int funcNum;
-    
+    //한번의 한개의 핀을 funcNum에 따라서 
+    //Set하려는 의도.
 }__attribute__((packed))farmCtl;
 
 

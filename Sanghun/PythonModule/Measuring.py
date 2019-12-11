@@ -12,21 +12,20 @@ class measureThread(threading.Thread):
         self.pinList=pinList
         
     def run(self):
-        print('설정온도는', end=" " )              
-        print(self.dataList[1], end=" " )
-        print("입니다")
+
         GPIO.setwarnings(False)    
-        instance = dht11.DHT11(pinList[0]) #dht11의 DHT11가 뭔진모르겠지만 21번핀으로 온습도 체크할게
+        instance = dht11.DHT11(self.pinList[0]) #dht11
         while True:
-            instance = dht11.DHT11(pinList[0]) #dht11의 DHT11가 뭔진모르겠지만 21번핀으로 온습도 체크할게
+            instance = dht11.DHT11(self.pinList[0]) #dht11
             result = instance.read()
             if result.is_valid():
                 print("Last valid input: " + str(datetime.datetime.now()))
                 print("Temperature: %d C" % result.temperature)
-                 print("Humidity: %d %%" % result.humidity)
-                    #여기서 현재 온도를 넘겨준다.
+                print("Humidity: %d %%" % result.humidity)
                 self.dataList[0]=result.temperature 
                 self.dataList[2]=result.humidity
+                #실습때 배운 DHT11의 이용하여 
+                #온,습도를 측정한 후 전역변수인 리스트에 현재 온도,습도를 대입했다.
             time.sleep(3)
 
         

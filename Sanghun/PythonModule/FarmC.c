@@ -24,8 +24,6 @@ static PyObject *pinSet(PyObject *self, PyObject *args)
     int size = sizeof(farmctl);    
     farmctl.pin=pin;
     farmctl.funcNum=order;
-    printf("%d 가 pin 입니다.\n",farmctl.pin);
-    printf("%d 가 funcNum 의 Bool 값 입니다.\n",farmctl.funcNum);
     fd = open( DEVICE_FILENAME, O_RDWR|O_NDELAY );    
     if( fd >= 0 ){  
 
@@ -50,9 +48,6 @@ static PyObject *thermoSet(PyObject *self,PyObject *args)
     
     if(!PyArg_ParseTuple(args, "i", &pinNum))
         return NULL;
-	
-    
-
     Py_RETURN_NONE;
 }
 

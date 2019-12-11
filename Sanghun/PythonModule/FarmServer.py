@@ -85,7 +85,7 @@ def report():
         humidFlag=1
     else:
         humidFlag=0
-    return jsonify(light = temperFlag, humid = humidFlag, setTemper = setting_th_list[0], setHimid= setting_th_list[1])
+    return jsonify(light = temperFlag, humid = humidFlag, setTemper = setting_th_list[0], setHumid= setting_th_list[1])
 
 @app.route('/getTH')
 def getTempHumid():

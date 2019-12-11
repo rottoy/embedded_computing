@@ -42,7 +42,8 @@ class MyWindow(QDialog):
         self.pushButton.clicked.connect(self.tempAutoOrOff)
         self.pushButton_2.clicked.connect(self.humidAutoOrOff)
         self.pushButton_7.clicked.connect(self.screenShot)
-        
+        self.lcdNumber_3.display(35)
+        self.lcdNumber_4.display(55)
         self.t=controlThread()
         self.t.start()
         self.t2=PictureThread()
@@ -114,7 +115,7 @@ class controlThread(threading.Thread):
     global humidAutoMode
     def __init__(self):
         threading.Thread.__init__(self) 
-        self.temparature =0
+        self.temperature =0
         self.humidity=0
         self.isTempSensorOn=False
         self.isHumidSensorOn=False
@@ -125,26 +126,40 @@ class controlThread(threading.Thread):
         
         data = {}
         data2= {}
+        data3={}
+        data4={}
         while True:
-            URL = "http://211.184.247.88:2224/getTH"
+            URL = "http://211.184.247.88:2224/getTH" #서버에 올라가있는 현재 온/습도 변수를 받아 LCDNumber로 출력
             r=requests.get(URL,data=data)
             data=r.json()
-            self.temparature=data['humidity']
-            self.humidity=data['temperature']
-            ui.lcdNumber.display(self.temparature)
+            self.temperature=data['temperature']
+            self.humidity=data['humidity']
+            ui.lcdNumber.display(self.temperature)
             ui.lcdNumber_2.display(self.humidity)
-            URL2 = "http://211.184.247.88:2224/getStatusTH"
+            URL2 = "http://211.184.247.88:2224/getStatusTH" #서버에 올라가있는 전구/가습기 작동 여부를 받아 Label로 출력(status : True Or False)
             r2=requests.get(URL2,data=data2)
             data2=r2.json()
             self.isTempSensorOn=data2['isTemp']
             self.isHumidSensorOn=data2['isHumid']
-            if tempAutoMode==True:
-                ui.label_3.setText("status : "+str(self.isTempSensorOn))
-            if humidAutoMode==True:
-                ui.label_4.setText("status : "+str(self.isHumidSensorOn))
             
+            if tempAutoMode==False:#전구 작동의 Auto 모드가 꺼져 있으면
+                URL3 = "http://211.184.247.88:2224/putBulbOff" # 전구를 꺼라 라고 서버에게 요청
+                r3=requests.get(URL3,data=data3)#성공시 success 문자열의 response를 받음.
+                data3=r3.json()
+                print(data3)
+            if humidAutoMode==False:#가습기 작동의 Auto 모드가 꺼져 있으면
+                URL4 = "http://211.184.247.88:2224/putHumidOff" #가습기를 꺼라 라고 서버에게 요청
+                r4=requests.get(URL4,data=data4) #성공시 success 문자열의 response를 받음.
+                data4=r4.json()
+                print(data4)
+                
+            ui.label_3.setText("status : "+str(self.isTempSensorOn))
+            print("i executed")
+            ui.label_4.setText("status : "+str(self.isHumidSensorOn))
             
-            #print(str(self.temparature)+" "+str(self.humidity))
+            print("bulb On : "+str(self.isTempSensorOn))
+            print("humid On : "+str(self.isHumidSensorOn))
+            #print(str(self.temperature)+" "+str(self.humidity))
             
             
             time.sleep(3)

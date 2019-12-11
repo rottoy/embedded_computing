@@ -7,14 +7,16 @@ import sys
 import RPi.GPIO as GPIO
 
 
-dataList=[0,0.0,0,0] #  현재온도, 적정온도, 현.습, 적.습 이다. 일단은. 네트워크에서 받아와서 적정온도는 채울 것이다.
-pinList=[0,0,0] #순서대로 온습도계 온도계 습도계이다. 
+dataList=[0,0.0,0,0] #  현재온도, 적정온도, 현.습, 적.습 이다. 
+                                #네트워크에서 받아와서 적정온도는 채울 것이다.
+pinList=[0,0,0] #순서대로 온습도계 온도계 습도계의 핀 번호이다.
 #뒤에두개는 현재습도 적정습도이다.
 def measure():
     #measure쓰레드를 실행시킨다. 
     global dataList
     global pinList
     t=Measuring.measureThread(dataList,pinList)
+    #메인의 dataList와 pinList를 쓰레드에 넘겨서 쓰레드끼리 공유하도록 한다.
     t.start()
     print("measure start")
     time.sleep(5)
@@ -23,6 +25,7 @@ def control():
     global dataList
     global pinList
     t=FarmControl.controlThread(dataList,pinList)
+    #메인의 dataList와 pinList를 쓰레드에 넘겨서 쓰레드끼리 공유하도록 한다.
     t.start()
     print("control start")
     time.sleep(5)
@@ -50,7 +53,7 @@ def setupHumid(pin):
     
 
 def main(): #순서대로 온습도계, 전구, 가습기의 핀 번호를 받습니다 .
-    setup((int)sys.argv[1],(int)sys.argv[2],(int)sys.argv[3])
+    setup(int(sys.argv[1]),int(sys.argv[2]),int(sys.argv[3]))
     measure()
     control()
 
